@@ -1,0 +1,1 @@
+ C:\\Users\\USER\\Downloads\\flutter-image-classification-master\\flutter-image-classification-master\\.dart_tool\\flutter_build\\f8b3449cc8c12b99f8a82c44096797ec\\native_assets.yaml: 
