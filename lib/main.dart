@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:image/image.dart' as img;
 
 void main() {
   runApp(const MyApp());
@@ -54,7 +53,8 @@ class _ImageClassificationState extends State<ImageClassification> {
         isLoading = true;
       });
       await Future.delayed(const Duration(seconds: 3));
-      interpreter = await Interpreter.fromAsset('assets/model/mobilenet_v1_1.0_224.tflite');
+      interpreter = await Interpreter.fromAsset(
+          'assets/model/mobilenet_v1_1.0_224.tflite');
       labels = await _loadLabels('assets/model/labels.txt');
       setState(() {
         command = 'Pick an Image';
@@ -105,11 +105,8 @@ class _ImageClassificationState extends State<ImageClassification> {
       var probabilities = output[0];
       var prediction = List<Map<String, dynamic>>.generate(
         probabilities.length,
-        (i) => {
-          'index': i,
-          'label': labels![i],
-          'confidence': probabilities[i]
-        },
+        (i) =>
+            {'index': i, 'label': labels![i], 'confidence': probabilities[i]},
       );
 
       prediction.sort((a, b) => b['confidence'].compareTo(a['confidence']));
@@ -128,7 +125,8 @@ class _ImageClassificationState extends State<ImageClassification> {
   }
 
   List<dynamic> imageToArray(img.Image inputImage) {
-    img.Image resizedImage = img.copyResize(inputImage, width: imgWidth, height: imgHeight);
+    img.Image resizedImage =
+        img.copyResize(inputImage, width: imgWidth, height: imgHeight);
     List<double> flattenedList = resizedImage.data!
         .expand((channel) => [channel.r, channel.g, channel.b])
         .map((value) => value.toDouble())
@@ -143,7 +141,8 @@ class _ImageClassificationState extends State<ImageClassification> {
         for (int w = 0; w < width; w++) {
           int index = c * height * width + h * width + w;
           reshapedArray[index] =
-              (float32Array[c * height * width + h * width + w] - 127.5) / 127.5;
+              (float32Array[c * height * width + h * width + w] - 127.5) /
+                  127.5;
         }
       }
     }
@@ -154,8 +153,32 @@ class _ImageClassificationState extends State<ImageClassification> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Image Classification'),
-        backgroundColor: Colors.indigo,
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.camera,
+                color: Colors.indigo, size: 28), 
+            SizedBox(width: 8), 
+            Text(
+              'Visionify Image Classification',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 22, 
+                color: Colors.indigo, 
+              ),
+            ),
+          ],
+        ),
+        backgroundColor:
+            const Color.fromARGB(255, 186, 196, 255), 
+        elevation: 4, 
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16), 
+          ),
+        ),
+        toolbarHeight: 70, 
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -214,7 +237,8 @@ class _ImageClassificationState extends State<ImageClassification> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: ListTile(
-                          leading: const Icon(Icons.label, color: Colors.indigo),
+                          leading:
+                              const Icon(Icons.label, color: Colors.indigo),
                           title: Text(
                             _output![index]['label'],
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -232,4 +256,21 @@ class _ImageClassificationState extends State<ImageClassification> {
               ElevatedButton.icon(
                 onPressed: isLoading ? null : pickImage,
                 icon: const Icon(Icons.image),
-            
+                label: const Text('Pick an Image'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.indigo,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
