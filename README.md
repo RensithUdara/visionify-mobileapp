@@ -23,5 +23,5 @@ Setup
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/visionify-image-classification.git
+git clone https://github.com/RensithUdara/visionify-image-classification.git
 cd visionify-image-classification
